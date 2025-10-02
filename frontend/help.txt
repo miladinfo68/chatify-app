@@ -1,0 +1,3 @@
+npm create vite@latest chatify-app/frontend --template react
+npm create vite@latest . --template react
+npm install tailwindcss @tailwindcss/vite

@@ -1,0 +1,25 @@
+# Production dependencies
+rm -rf node_modules package-lock.json
+npm install -g tsx
+
+npm install express mongoose jsonwebtoken bcryptjs cors dotenv
+
+# Development dependencies
+npm install -D typescript @types/node @types/express @types/mongoose @types/jsonwebtoken @types/bcryptjs @types/cors ts-node nodemon
+
+npm install -D @types/bcryptjs @types/cors @types/express @types/jsonwebtoken @types/mongoose
+
+npm uninstall dotenv
+npm install dotenv@16.4.5
+npm install dotenvx
+
+
+npm uninstall mongoos
+npm install mongoose
+npm install @types/mongoose
+
+# Initialize TypeScript
+npx tsc --init
+
+
+mkdir -p src/{config,controllers,middleware,models,routes,types,utils}

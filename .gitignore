@@ -1,0 +1,17 @@
+# Node.js
+**/node_modules/
+
+# Environment
+*.env
+.env
+
+# Build outputs
+**/dist/
+**/build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+
