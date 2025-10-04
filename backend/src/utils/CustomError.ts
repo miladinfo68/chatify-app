@@ -1,6 +1,6 @@
 // src/errors/CustomErrors.ts
 class CustomError extends Error {
-  public statusCode: number;
+  private statusCode: number;
 
   constructor(message: string, statusCode: number = 500) {
     super(message);
@@ -36,3 +36,4 @@ export class ConflictError extends CustomError {
     this.name = 'ConflictError';
   }
 }
+

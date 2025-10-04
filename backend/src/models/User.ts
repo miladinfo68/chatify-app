@@ -52,24 +52,24 @@ const userSchema = new Schema<IUser>(
   },
   {
     timestamps: true,
-    toJSON: {
-      transform: (doc, ret: Record<string, any>) => {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        delete ret.__v;
-        delete ret.password;
-        return ret;
-      },
-    },
-    toObject: {
-      transform: (doc, ret: Record<string, any>) => {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        delete ret.__v;
-        delete ret.password;
-        return ret;
-      },
-    },
+    // toJSON: {
+    //   transform: (doc, ret: Record<string, any>) => {
+    //     ret.id = ret._id.toString();
+    //     delete ret._id;
+    //     delete ret.__v;
+    //     delete ret.password;
+    //     return ret;
+    //   },
+    // },
+    // toObject: {
+    //   transform: (doc, ret: Record<string, any>) => {
+    //     ret.id = ret._id.toString();
+    //     delete ret._id;
+    //     delete ret.__v;
+    //     delete ret.password;
+    //     return ret;
+    //   },
+    // },
   }
 );
 
