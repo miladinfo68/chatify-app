@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "npx tsx --watch src/app.ts",
-    "build": "tsc && echo 'Build completed successfully'",
+    "build": "tsc --noEmitOnError && echo 'Build completed successfully'",
     "start": "tsc && node dist/app.js",
     "clean": "rimraf dist",
     "clean:all": "npx rimraf node_modules dist package-lock.json"
