@@ -13,7 +13,9 @@
     "build": "npx tsc --noEmitOnError && echo 'Build completed successfully'",
     "start": "node dist/app.js",
     "clean": "rimraf dist",
-    "clean:all": "npx rimraf node_modules dist package-lock.json"
+    "clean:all": "npx rimraf node_modules dist package-lock.json",
+    "debug:files": "echo '=== Current Directory ===' && pwd && echo '=== dist contents ===' && ls -la dist/ || echo 'dist not found' && echo '=== src contents ===' && ls -la src/",
+    "verify": "npm run build && [ -f dist/app.js ] && echo '✅ Build successful - dist/app.js exists' || echo '❌ Build failed - dist/app.js missing'"
   },
   "keywords": [],
   "author": "",
