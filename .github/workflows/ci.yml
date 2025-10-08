@@ -1,0 +1,55 @@
+name: Chatify-app CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.19.0'
+
+      - name: Cache backend dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-node-
+
+      - name: Install backend dependencies
+        run: cd backend && npm ci
+
+    #   - name: Lint backend
+    #     run: cd backend && npm run eslint
+
+      - name: Build backend
+        run: cd backend && npm run build
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node-
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+    #   - name: Lint frontend
+    #     run: cd frontend && npm run lint
+
+      - name: Build frontend
+        run: cd frontend && npm run build

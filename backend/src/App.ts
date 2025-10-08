@@ -33,9 +33,9 @@ class App {
       // console.log("__dirname",__dirname,path.resolve(__dirname, '../../frontend/dist'))
       const possiblePaths = [
         // From backend root (chatify-app/backend)
-        // path.resolve(process.cwd(), '../frontend/dist'),
+        path.resolve(process.cwd(), '../frontend/dist'),
         // From backend dist (chatify-app/backend/dist)
-        path.resolve(__dirname, "../../frontend/dist"),
+        // path.resolve(__dirname, "../../frontend/dist"),
       ];
 
       for (const possiblePath of possiblePaths) {
