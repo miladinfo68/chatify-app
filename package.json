@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "./backend/dist/app.js",
-  "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=11.0.0"
-  },
   "scripts": {
     "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build",
     "start": "cd backend && npm run start",
