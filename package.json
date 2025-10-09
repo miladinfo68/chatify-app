@@ -1,15 +1,6 @@
 {
-  "name": "chatify-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "./backend/dist/app.js",
   "scripts": {
     "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build",
-    "start": "cd backend && npm run start",
-    "dev": "cd backend && npm run dev",
-    "debug": "cd backend && npm run debug:files"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "start": "cd backend && npm run start"
+  }
 }
