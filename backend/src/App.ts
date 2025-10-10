@@ -23,7 +23,7 @@ class App {
 
   constructor() {
     this.app = express();
-    this.port = Number(Env.PORT) || 3000;
+    this.port = Number(Env.PORT);
     this.findFrontendPath();
   }
 
