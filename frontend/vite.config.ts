@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  build:{manifest:true ,outDir:"./backend/dist"},
-  base:"/",
-  root:"./",
+  // build:{manifest:true ,outDir:"./backend/dist"},
+  // base:"/",
+  // root:"./",
   plugins: [react(), tailwindcss()],
 });

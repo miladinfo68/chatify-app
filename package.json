@@ -1,6 +1,17 @@
 {
+  "name": "chatify-app",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build",
-    "start": "cd backend && npm run start"
+    "install:all": "cd frontend && npm install && cd ../backend && npm install",
+    "clean:frontend": "cd frontend && npx rimraf dist",
+    "clean:backend": "cd backend && npx rimraf dist",
+    "clean": "npm run clean:frontend && npm run clean:backend",
+    "build": "npm run clean && cd frontend && npm run build && cd ../backend && npm run build && cd .. && node copy-frontend.js",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }
