@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "install:all": "cd frontend && npm install && cd ../backend && npm install",
-    "clean:frontend": "cd frontend && npx rimraf dist",
-    "clean:backend": "cd backend && npx rimraf dist",
+    "install:all": "npm --prefix frontend install && npm --prefix backend install",
+    "clean:frontend": "npm --prefix frontend run clean",
+    "clean:backend": "npm --prefix backend run clean",
     "clean": "npm run clean:frontend && npm run clean:backend",
-    "build": "npm run clean && cd frontend && npm run build && cd ../backend && npm run build && cd .. && node copy-frontend.js",
-    "vercel:build": "npm run install:all && npm run build",
-    "start": "cd backend && npm start",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build": "npm run clean && npm run build:frontend && npm run build:backend && node copy-frontend.js",
+    "start": "node backend/dist/app.js",
     "dev": "cd backend && npm run dev"
   },
   "devDependencies": {
