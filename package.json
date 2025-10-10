@@ -8,6 +8,7 @@
     "clean:backend": "cd backend && npx rimraf dist",
     "clean": "npm run clean:frontend && npm run clean:backend",
     "build": "npm run clean && cd frontend && npm run build && cd ../backend && npm run build && cd .. && node copy-frontend.js",
+    "vercel:build": "npm run install:all && npm run build",
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev"
   },
