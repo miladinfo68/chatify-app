@@ -20,45 +20,23 @@ jobs:
         with:
           node-version: '22.19.0'
 
-      - name: Install root dependencies
-        run: npm install
+      - name: Install and build backend
+        run: |
+          cd backend
+          npm install
+          npm run build
 
-      - name: Cache backend dependencies
-        uses: actions/cache@v4
-        with:
-          path: backend/node_modules
-          key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-backend-node-
-
-      - name: Install backend dependencies
-        run: cd backend && npm ci
-
-      - name: Build backend
-        run: cd backend && npm run build
-
-      - name: Cache frontend dependencies
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-frontend-node-
-
-      - name: Install frontend dependencies
-        run: cd frontend && npm ci
-
-      - name: Build frontend
-        run: cd frontend && npm run build
+      - name: Install and build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
 
       - name: Copy frontend to backend
-        run: npm run build
+        run: node copy-frontend.js
 
       - name: Verify build
         run: |
-          echo "=== Verifying build structure ==="
-          ls -la backend/dist/
-          echo "=== Frontend in backend ==="
-          ls -la backend/dist/frontApp/ || echo "Frontend not found"
-          echo "=== Backend app ==="
-          ls -la backend/dist/app.js || echo "App not found"
+          echo "=== Build Verification ==="
+          ls -la backend/dist/frontApp/ && echo "✅ FrontApp copied successfully" || echo "❌ FrontApp not found"
+          [ -f backend/dist/app.js ] && echo "✅ Backend built successfully" || echo "❌ Backend build failed"
