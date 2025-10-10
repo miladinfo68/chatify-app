@@ -11,7 +11,7 @@
     "build:backend": "npm --prefix backend run build",
     "build": "npm run clean && npm run build:frontend && npm run build:backend && node copy-frontend.js",
     "start": "node backend/dist/app.js",
-    "dev": "cd backend && npm run dev"
+    "vercel:build": "npm run install:all && npm run build"
   },
   "devDependencies": {
     "rimraf": "^6.0.1"
