@@ -1,3 +1,5 @@
+// src/routes/ChatRoutes.ts
+
 import { Router } from "express";
 import { ChatController } from "../controllers/ChatController.js";
 import { IChatService } from "../interfaces/IChatService.js";

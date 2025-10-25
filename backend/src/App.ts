@@ -10,6 +10,11 @@ import { createChatRoutes } from "./routes/ChatRoutes.js";
 import { AuthService } from "./services/AuthService.js";
 import { ChatService } from "./services/ChatService.js";
 import { errorHandler } from "./utils/errorHandler.js";
+import TokenManagerService from "./services/TokenManagerService.js";
+import { PasswordManagerService } from "./services/PasswordManagerService.js";
+import { ClientMetadataService } from "./services/ClientMetadataService.js";
+
+
 
 // Fix for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -27,36 +32,40 @@ class App {
     this.findFrontendPath();
   }
 
-private findFrontendPath(): void {
-  try {
-    // Look for frontend in the dist/frontApp directory (copied by copy-frontend.js)
-    const frontendBuildPath = path.join(__dirname, "frontApp");
-    
-    if (fs.existsSync(frontendBuildPath)) {
-      this.frontendPath = frontendBuildPath;
-      console.log(`✅ Found frontend at: ${this.frontendPath}`);
-      
-      // Verify index.html exists
-      const indexPath = path.join(frontendBuildPath, "index.html");
-      if (fs.existsSync(indexPath)) {
-        console.log('✅ Found index.html');
+  private findFrontendPath(): void {
+    try {
+      // Look for frontend in the dist/frontApp directory (copied by copy-frontend.js)
+      const frontendBuildPath = path.join(__dirname, "frontApp");
+
+      if (fs.existsSync(frontendBuildPath)) {
+        this.frontendPath = frontendBuildPath;
+        console.log(`✅ Found frontend at: ${this.frontendPath}`);
+
+        // Verify index.html exists
+        const indexPath = path.join(frontendBuildPath, "index.html");
+        if (fs.existsSync(indexPath)) {
+          console.log("✅ Found index.html");
+        } else {
+          console.warn("⚠️ index.html not found in frontApp directory");
+          // List what's actually there for debugging
+          const files = fs.readdirSync(frontendBuildPath);
+          console.log("📁 Files in frontApp directory:", files);
+        }
       } else {
-        console.warn('⚠️ index.html not found in frontApp directory');
-        // List what's actually there for debugging
-        const files = fs.readdirSync(frontendBuildPath);
-        console.log('📁 Files in frontApp directory:', files);
+        console.warn(
+          "⚠️ Frontend dist directory not found. Running in API-only mode."
+        );
+        console.log("💡 Expected path:", frontendBuildPath);
+        console.log(
+          "💡 Run 'npm run build' from root to build and copy frontend"
+        );
+        this.frontendPath = null;
       }
-    } else {
-      console.warn("⚠️ Frontend dist directory not found. Running in API-only mode.");
-      console.log("💡 Expected path:", frontendBuildPath);
-      console.log("💡 Run 'npm run build' from root to build and copy frontend");
+    } catch (error) {
+      console.warn("⚠️ Error finding frontend path:", error);
       this.frontendPath = null;
     }
-  } catch (error) {
-    console.warn("⚠️ Error finding frontend path:", error);
-    this.frontendPath = null;
   }
-}
   public async initialize(): Promise<void> {
     this.initializeMiddleware();
     this.initializeRoutes();
@@ -111,15 +120,16 @@ private findFrontendPath(): void {
 
   private initializeMiddleware(): void {
     // CORS middleware
-    this.app.use(cors({
-      origin:true,
-      credentials: true,
-    }));
+    this.app.use(
+      cors({
+        origin: true,
+        credentials: true,
+      })
+    );
 
     // Body parsing middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded());
-    
 
     // Add logging middleware for debugging
     this.app.use((req: Request, res: Response, next: NextFunction) => {
@@ -129,8 +139,13 @@ private findFrontendPath(): void {
   }
 
   private initializeRoutes(): void {
-    // API routes - these come first
-    this.app.use("/api/auth", createAuthRoutes(new AuthService()));
+    
+    const tokenManager = new TokenManagerService();
+    const passwordManager = new PasswordManagerService();
+    const clientMetadataService = new ClientMetadataService(); 
+    const authService = new AuthService(tokenManager, passwordManager);
+
+    this.app.use("/api/auth", createAuthRoutes(authService, clientMetadataService));
     this.app.use("/api/chat", createChatRoutes(new ChatService()));
 
     // Health check
@@ -148,22 +163,26 @@ private findFrontendPath(): void {
 
   private serveFrontend(): void {
     if (!this.frontendPath) {
-      console.log('🚫 Frontend path not available - skipping static file serving');
+      console.log(
+        "🚫 Frontend path not available - skipping static file serving"
+      );
       return;
     }
 
     console.log(`📁 Serving static files from: ${this.frontendPath}`);
-    
+
     // Serve static files from frontend dist
-    this.app.use(express.static(this.frontendPath, {
-      index: false, // Don't serve index.html for directories
-      maxAge: process.env.NODE_ENV === 'production' ? '1d' : '0'
-    }));
+    this.app.use(
+      express.static(this.frontendPath, {
+        index: false, // Don't serve index.html for directories
+        maxAge: process.env.NODE_ENV === "production" ? "1d" : "0",
+      })
+    );
 
     // SPA fallback - serve index.html for all non-API routes
     this.app.get(/^(?!\/api).*$/, (req: Request, res: Response) => {
       const indexPath = path.join(this.frontendPath!, "index.html");
-      
+
       if (fs.existsSync(indexPath)) {
         console.log(`🎯 Serving SPA for: ${req.path}`);
         res.sendFile(indexPath);
@@ -173,7 +192,8 @@ private findFrontendPath(): void {
           success: false,
           error: "Frontend not available",
           message: "The frontend application is not built or deployed yet.",
-          instructions: "Run 'npm run build' from the root directory to build the frontend"
+          instructions:
+            "Run 'npm run build' from the root directory to build the frontend",
         });
       }
     });
@@ -187,9 +207,9 @@ private findFrontendPath(): void {
   private async initializeDatabase(): Promise<void> {
     try {
       await db.connect();
-      console.log('✅ Database connected successfully');
+      console.log("✅ Database connected successfully");
     } catch (error) {
-      console.error('❌ Database connection failed:', error);
+      console.error("❌ Database connection failed:", error);
       throw error;
     }
   }
@@ -212,7 +232,8 @@ private findFrontendPath(): void {
             "GET /api/auth/verify-token",
             "GET /api/chat/send",
           ],
-          instructions: "Run 'npm run build' from root directory to build and deploy the frontend",
+          instructions:
+            "Run 'npm run build' from root directory to build and deploy the frontend",
         },
       });
     }
@@ -227,7 +248,7 @@ private findFrontendPath(): void {
         timestamp: new Date().toISOString(),
         database: db.getConnectionStatus(),
         frontend: this.frontendPath ? "Available" : "Not found",
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env.NODE_ENV || "development",
         uptime: process.uptime(),
         memory: process.memoryUsage(),
       },
@@ -236,7 +257,7 @@ private findFrontendPath(): void {
 
   private handleNotFound = (req: Request, res: Response): void => {
     // If it's an API route, return JSON 404
-    if (req.path.startsWith('/api/')) {
+    if (req.path.startsWith("/api/")) {
       res.status(404).json({
         success: false,
         error: "API route not found",
@@ -285,13 +306,13 @@ process.on("SIGTERM", async () => {
 });
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error: Error) => {
-  console.error('💥 Uncaught Exception:', error);
+process.on("uncaughtException", (error: Error) => {
+  console.error("💥 Uncaught Exception:", error);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
-  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
+process.on("unhandledRejection", (reason: any, promise: Promise<any>) => {
+  console.error("💥 Unhandled Rejection at:", promise, "reason:", reason);
   process.exit(1);
 });
 

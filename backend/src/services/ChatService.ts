@@ -1,3 +1,4 @@
+// src/services/ChatService.ts
 import { IMessagePayload, IChatService } from "../interfaces/IChatService.js";
 
 export class ChatService implements IChatService {

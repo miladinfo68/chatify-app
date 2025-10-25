@@ -9,31 +9,29 @@
     "clean": "rimraf dist",
     "build": "npm run clean && npx tsc --noEmitOnError && echo 'Build completed successfully'",
     "start": "node dist/app.js",
-    "clean:all": "npx rimraf node_modules dist package-lock.json",
-    "debug:files": "echo '=== Current Directory ===' && pwd && echo '=== dist contents ===' && ls -la dist/ || echo 'dist not found' && echo '=== src contents ===' && ls -la src/",
-    "verify": "npm run build && [ -f dist/app.js ] && echo '✅ Build successful - dist/app.js exists' || echo '❌ Build failed - dist/app.js missing'"
+    "clean:all": "npx rimraf node_modules dist package-lock.json"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.3",
-    "zod": "^4.1.11"
+    "mongoose": "^8.19.1",
+    "ms": "^2.1.3",
+    "node-appwrite": "^20.2.1",
+    "uuid": "^13.0.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
-    "@types/node": "^24.6.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2"

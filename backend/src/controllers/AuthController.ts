@@ -5,41 +5,60 @@ import {
   ILoginPayload,
   IRegisterPayload,
 } from "../interfaces/IAuthService.js";
+import { IClientMetadataService } from "../interfaces/IClientMetadataService.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {
-  LoginInput,
-  RegisterInput,
-} from "../models/schema-validations/AuthValidations.js";
 
 export class AuthController {
-  constructor(private authService: IAuthService) {}
-
-  login = async (req: Request, res: Response): Promise<void> => {
-    // Use validated data instead of req.body
-    const payload: LoginInput = req.validatedData!;
-    const result = await this.authService.login(payload as ILoginPayload);
-    const response = ApiResponse.success(result, "Login successful");
-    res.status(response.status).json(response);
-  };
+  constructor(
+    private authService: IAuthService,
+    private clientMetadataService: IClientMetadataService
+  ) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
-    const payload: RegisterInput = req.validatedData!;
-    const result = await this.authService.register(payload as IRegisterPayload);
-    const response = ApiResponse.created(result,"User registered successfully");
-    res.status(response.status).json(response);
+    const registerPayload: IRegisterPayload = req.body;
+    const result = await this.authService.register(registerPayload);
+    res
+      .status(201)
+      .json(ApiResponse.created(result, "User registered successfully"));
+  };
+
+  login = async (req: Request, res: Response): Promise<void> => {
+    const loginPayload: ILoginPayload = req.body;
+    const clientMetadata = this.clientMetadataService.extract(req);
+    const result = await this.authService.login(
+      loginPayload,
+      clientMetadata,
+      res
+    );
+    res.json(ApiResponse.success(result, "Login successful"));
   };
 
   logout = async (req: Request, res: Response): Promise<void> => {
-    const { userId } = req.validatedData!;
-    await this.authService.logout(userId);
-    const response = ApiResponse.success(undefined, "Logout successful");
-    res.status(response.status).json(response);
+    const { refreshToken } = req.body;
+    await this.authService.logout(refreshToken);
+    res.json(ApiResponse.success(undefined, "Logged out successfully"));
+  };
+
+  logoutAll = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!._id.toString();
+    await this.authService.logoutAll(userId);
+    res.json(ApiResponse.success(undefined, "All sessions logged out"));
+  };
+
+  refreshToken = async (req: Request, res: Response): Promise<void> => {
+    const { refreshToken } = req.body;
+    const clientMetadata = this.clientMetadataService.extract(req);
+    const result = await this.authService.refreshTokens(
+      refreshToken,
+      clientMetadata,
+      res
+    );
+    res.json(ApiResponse.success(result, "Token refreshed successfully"));
   };
 
   verifyToken = async (req: Request, res: Response): Promise<void> => {
-    const token = req.headers.authorization?.replace("Bearer ", "") || "";
-    const user = await this.authService.validateToken(token);
-    const response = ApiResponse.success(user, "Token is valid");
-    res.status(response.status).json(response);
+    const { token } = req.body;
+    const decoded = await this.authService.verifyToken(token);
+    res.json(ApiResponse.success( decoded , "Token is valid"));
   };
 }

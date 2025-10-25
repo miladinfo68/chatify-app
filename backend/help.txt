@@ -23,3 +23,7 @@ npx tsc --init
 
 
 mkdir -p src/{config,controllers,middleware,models,routes,types,utils}
+
+
+npm i @automapper/core @automapper/classes reflect-metadata # for classes
+npm i @automapper/core @automapper/pojos # for pojos

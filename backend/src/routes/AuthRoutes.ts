@@ -2,59 +2,81 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController.js";
 import { IAuthService } from "../interfaces/IAuthService.js";
-import {
-  validate, 
-  validateHeaders
-} from "../middlewares/RequestValidator.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { 
-  loginSchema, 
-  logoutSchema, 
-  registerSchema, 
-  authHeaderSchema 
-} from "../models/schema-validations/AuthValidations.js";
+import { IClientMetadataService } from "../interfaces/IClientMetadataService.js";
+import { validate } from "../middlewares/requestValidation.js";
+import {
+  registerValidation,
+  loginValidation,
+  refreshTokenValidation,
+  verifyTokenValidation,
+} from '../validations/authValidation.js';
+
+import { authenticate } from '../middlewares/authenticate.js';
 
 export class AuthRoutes {
   private router: Router;
   private authController: AuthController;
 
-  constructor(authService: IAuthService) {
+  constructor(
+    authService: IAuthService,
+    clientMetadataService: IClientMetadataService,
+    // private authenticate: RequestHandler
+  ) {
     this.router = Router();
-    this.authController = new AuthController(authService);
+    this.authController = new AuthController(
+      authService,
+      clientMetadataService
+    );
     this.setupRoutes();
   }
 
   private setupRoutes(): void {
-    // Public routes with Zod validation
+    // Public routes
     this.router.post(
       "/register",
-      validate(registerSchema),
+      validate(registerValidation),
       this.authController.register
     );
-
     this.router.post(
-      "/login", 
-      validate(loginSchema),
+      "/login",
+      validate(loginValidation),
       this.authController.login
     );
-
     this.router.post(
-      "/logout",
-      validate(logoutSchema),
-      this.authController.logout
+      "/refresh-token",
+      validate(refreshTokenValidation),
+      this.authController.refreshToken
     );
 
-    this.router.get(
+    this.router.post(
       "/verify-token",
-      validateHeaders(authHeaderSchema),
+      // authenticate,
+      validate(verifyTokenValidation), // ✅ Validate empty body
       this.authController.verifyToken
     );
 
-    // Health check
-    this.router.get("/health", (req, res) => {
-      const response = ApiResponse.success(undefined, 'Auth service healthy');
-      res.status(response.status).json(response);
-    });
+    // Protected routes - with proper validation
+    this.router.post(
+      "/logout",
+      authenticate,
+      this.authController.logout
+    );
+    this.router.post(
+      "/logout-all",
+      authenticate,
+      this.authController.logoutAll
+    );
+
+
+    // Health check (with validation)
+    this.router.get(
+      "/health",
+      (req, res) => {
+        const response = ApiResponse.success(undefined, "Auth service healthy");
+        res.status(response.status).json(response);
+      }
+    );
   }
 
   public getRouter(): Router {
@@ -62,6 +84,11 @@ export class AuthRoutes {
   }
 }
 
-export const createAuthRoutes = (authService: IAuthService): Router => {
-  return new AuthRoutes(authService).getRouter();
-};
+export const createAuthRoutes = (
+  authService: IAuthService,
+  clientMetadataService: IClientMetadataService
+): Router =>
+  new AuthRoutes(
+    authService,
+    clientMetadataService
+  ).getRouter();

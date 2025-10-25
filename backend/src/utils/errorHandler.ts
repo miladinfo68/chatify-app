@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "./ApiResponse.js";
 import Env from "../configs/Env.js";
+import { UnauthorizedError } from "./CustomError.js";
 
 export const errorHandler = (
   error: any,
@@ -9,13 +10,25 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): any => {
-  Env.NODE_ENV === "development" &&
-    console.error("🚨 Global Error Handler:", {
+  // Log error details
+  if (Env.NODE_ENV !== "production") {
+    console.error("🚨 Error Details:", {
+      name: error.name,
       message: error.message,
       stack: error.stack,
       url: req.url,
       method: req.method,
+      ip: req.ip,
+      userAgent: req.get("User-Agent"),
     });
+  } else {
+    console.error("🚨 Error:", {
+      name: error.name,
+      message: error.message,
+      url: req.url,
+      method: req.method,
+    });
+  }
 
   // MongoDB duplicate key error
   if (error.name === "MongoServerError" && error.code === 11000) {
@@ -49,9 +62,11 @@ export const errorHandler = (
   }
 
   // Default error
-  const message =
-    Env.NODE_ENV === "production" ? "Internal server error" : error.message;
+  const message = Env.NODE_ENV === "production" && error.statusCode >= 500
+    ? "Internal server error"
+    : error.message;
 
-  const response = ApiResponse.internalError(message);
-  return res.status(response.status).json(response);
+  const status = error.statusCode || 500;
+  const response = ApiResponse.error(message, status);
+  res.status(response.status).json(response);
 };

@@ -1,10 +1,6 @@
-//src/interfaces/IAuthservice.ts
-export interface IAuthService {
-  login(palylod: ILoginPayload): Promise<ITokenResponse>;
-  register(palylod: IRegisterPayload): Promise<ITokenResponse>;
-  logout(userId: string): Promise<void>;
-  validateToken(token: string): Promise<any>;
-}
+// src/interfaces/IAuthService.ts
+import { Response } from "express";
+import { IClientMetadata } from "./IClientMetadataService.js";
 
 export interface ILoginPayload {
   email: string;
@@ -13,12 +9,45 @@ export interface ILoginPayload {
 
 export interface IRegisterPayload extends ILoginPayload {
   name: string;
+  avatar?: string;
 }
 
-export interface IUser extends IRegisterPayload {
+export interface IUser {
   id?: string;
+  name: string;
+  email: string;
 }
 
-export interface ITokenResponse extends IUser {
-  token: string;
+export interface ITokenResponse {
+  user: IUser;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface ITokenVerify{
+  userId:string,
+  isValid:boolean,
+  iat:number,
+  exp:number
+}
+
+export interface IAuthService {
+  register(payload: IRegisterPayload): Promise<IUser>;
+
+  login(
+    payload: ILoginPayload,
+    clientMetadata: IClientMetadata,
+    resp?: Response
+  ): Promise<ITokenResponse>;
+
+  refreshTokens(
+    refreshToken: string,
+    clientMetadata: IClientMetadata,
+    resp?: Response
+  ): Promise<ITokenResponse>;
+
+  verifyToken(token:string):Promise<ITokenVerify>;
+
+  logout(refreshToken: string): Promise<void>;
+  logoutAll(userId: string): Promise<void>;
 }

@@ -1,5 +1,5 @@
-// src/errors/CustomErrors.ts
-class CustomError extends Error {
+// src/utils/CustomErrors.ts
+export class CustomError extends Error {
   private statusCode: number;
 
   constructor(message: string, statusCode: number = 500) {
