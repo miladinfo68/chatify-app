@@ -1,6 +1,7 @@
 // src/interfaces/IAuthService.ts
 import { Response } from "express";
 import { IClientMetadata } from "./IClientMetadataService.js";
+import { IJwtRefreshTokenResponse } from "./ITokenManagerService.js";
 
 export interface ILoginPayload {
   email: string;
@@ -47,6 +48,7 @@ export interface IAuthService {
   ): Promise<ITokenResponse>;
 
   verifyToken(token:string):Promise<ITokenVerify>;
+  verifyRefreshToken(refreshToken: string): Promise<IJwtRefreshTokenResponse>;
 
   logout(refreshToken: string): Promise<void>;
   logoutAll(userId: string): Promise<void>;

@@ -61,4 +61,10 @@ export class AuthController {
     const decoded = await this.authService.verifyToken(token);
     res.json(ApiResponse.success( decoded , "Token is valid"));
   };
+
+  verifyRefreshToken = async (req: Request, res: Response): Promise<void> => {
+    const { refreshToken } = req.body;
+    const data = await this.authService.verifyRefreshToken(refreshToken);
+    res.json(ApiResponse.success( data , "RefreshToken is valid"));
+  };
 }

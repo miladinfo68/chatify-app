@@ -31,6 +31,15 @@ const refreshTokenSchema = new Schema<IRefreshToken>({
   timestamps: true,
 });
 
-refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // Auto-delete expired
+// 🔐 OPTIMIZED INDEXES for better query performance
+//expireAfterSeconds: 0 means 
+// MongoDB will delete the document when expiresAt <= current time
+// The 0 means "delete exactly at the expiration time"
+// This runs as a background process every 60 seconds
+
+refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // Auto-delete expired tokens
+refreshTokenSchema.index({ userId: 1, revokedAt: 1 }); // Fast queries for user's active tokens
+refreshTokenSchema.index({ token: 1 }); // Fast token lookup (already had this)
+refreshTokenSchema.index({ createdAt: -1 }); // For cleanup and analytics
 
 export const RefreshToken = model<IRefreshToken>("RefreshToken", refreshTokenSchema);

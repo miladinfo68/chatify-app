@@ -10,9 +10,9 @@ import {
   loginValidation,
   refreshTokenValidation,
   verifyTokenValidation,
-} from '../validations/authValidation.js';
+} from "../validations/authValidation.js";
 
-import { authenticate } from '../middlewares/authenticate.js';
+import { authenticate } from "../middlewares/authenticate.js";
 
 export class AuthRoutes {
   private router: Router;
@@ -20,7 +20,7 @@ export class AuthRoutes {
 
   constructor(
     authService: IAuthService,
-    clientMetadataService: IClientMetadataService,
+    clientMetadataService: IClientMetadataService
     // private authenticate: RequestHandler
   ) {
     this.router = Router();
@@ -56,27 +56,25 @@ export class AuthRoutes {
       this.authController.verifyToken
     );
 
-    // Protected routes - with proper validation
     this.router.post(
-      "/logout",
-      authenticate,
-      this.authController.logout
+      "/verify-refreshToken",
+      validate(refreshTokenValidation), // ✅ Validate empty body
+      this.authController.verifyRefreshToken
     );
+
+    // Protected routes - with proper validation
+    this.router.post("/logout", authenticate, this.authController.logout);
     this.router.post(
       "/logout-all",
       authenticate,
       this.authController.logoutAll
     );
 
-
     // Health check (with validation)
-    this.router.get(
-      "/health",
-      (req, res) => {
-        const response = ApiResponse.success(undefined, "Auth service healthy");
-        res.status(response.status).json(response);
-      }
-    );
+    this.router.get("/health", (req, res) => {
+      const response = ApiResponse.success(undefined, "Auth service healthy");
+      res.status(response.status).json(response);
+    });
   }
 
   public getRouter(): Router {
@@ -87,8 +85,4 @@ export class AuthRoutes {
 export const createAuthRoutes = (
   authService: IAuthService,
   clientMetadataService: IClientMetadataService
-): Router =>
-  new AuthRoutes(
-    authService,
-    clientMetadataService
-  ).getRouter();
+): Router => new AuthRoutes(authService, clientMetadataService).getRouter();
