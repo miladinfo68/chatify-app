@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController.js";
 import { IAuthService } from "../interfaces/IAuthService.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { IClientMetadataService } from "../interfaces/IClientMetadataService.js";
 import { validate } from "../middlewares/requestValidation.js";
 import {

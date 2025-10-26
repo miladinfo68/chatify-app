@@ -14,7 +14,7 @@ import {
 } from "../interfaces/ITokenManagerService.js";
 
 import { RefreshToken } from "../models/RefreshToken.js";
-import { UnauthorizedError } from "../utils/CustomError.js";
+import { UnauthorizedError } from "../utils/customError.js";
 import { IClientMetadata } from "../interfaces/IClientMetadataService.js";
 import User from "../models/User.js";
 

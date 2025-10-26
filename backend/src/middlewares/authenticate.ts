@@ -2,7 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { CustomError } from '../utils/CustomError.js';
+import { CustomError } from '../utils/customError.js';
 import Env from '../configs/Env.js';
 import User, { IUser } from '../models/User.js';
 import { IJwtVerifyResponse } from '../interfaces/ITokenManagerService.js';

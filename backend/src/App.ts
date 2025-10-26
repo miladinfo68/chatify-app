@@ -13,6 +13,7 @@ import { errorHandler } from "./utils/errorHandler.js";
 import TokenManagerService from "./services/TokenManagerService.js";
 import { PasswordManagerService } from "./services/PasswordManagerService.js";
 import { ClientMetadataService } from "./services/ClientMetadataService.js";
+import { DateTimeCovertor } from "./utils/dateTimeConvertor.js";
 
 
 
@@ -140,9 +141,10 @@ class App {
 
   private initializeRoutes(): void {
     
-    const tokenManager = new TokenManagerService();
-    const passwordManager = new PasswordManagerService();
     const clientMetadataService = new ClientMetadataService(); 
+    const passwordManager = new PasswordManagerService();
+    const dateTimeCovertor= new DateTimeCovertor();
+    const tokenManager = new TokenManagerService(dateTimeCovertor);
     const authService = new AuthService(tokenManager, passwordManager);
 
     this.app.use("/api/auth", createAuthRoutes(authService, clientMetadataService));

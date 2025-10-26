@@ -1,8 +1,8 @@
 // src/utils/errorHandler.ts
 import { Request, Response, NextFunction } from "express";
-import { ApiResponse } from "./ApiResponse.js";
+import { ApiResponse } from "./apiResponse.js";
 import Env from "../configs/Env.js";
-import { UnauthorizedError } from "./CustomError.js";
+import { UnauthorizedError } from "./customError.js";
 
 export const errorHandler = (
   error: any,

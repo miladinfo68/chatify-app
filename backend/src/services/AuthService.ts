@@ -14,7 +14,7 @@ import {
   ConflictError,
   NotFoundError,
   UnauthorizedError,
-} from "../utils/CustomError.js";
+} from "../utils/customError.js";
 
 import { IPasswordManagerService } from "../interfaces/IPasswordManagerService.js";
 import {

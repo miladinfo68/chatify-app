@@ -1,7 +1,7 @@
 // src/middlewares/requestValidation.ts
 import { Request, Response, NextFunction } from 'express';
 import { AnySchema } from 'yup';
-import {CustomError} from '../utils/CustomError.js'
+import {CustomError} from '../utils/customError.js'
 
 export const validate = (schema: AnySchema) => async (
   req: Request,
