@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --port 4000",
     "build": "next build",
-    "start": "npm run build && next start --port 4200",
+    "start": "next start --port 4200",
+    "start:b": "npm run build && next start --port 4200",
     "lint": "eslint"
   },
   "dependencies": {
