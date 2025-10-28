@@ -1,0 +1,17 @@
+.git
+.gitignore
+README.md
+node_modules
+dist
+.next
+.env                    # Exclude all .env files
+*.log
+Dockerfile
+docker-compose.yml
+.dockerignore
+.vscode
+.nyc_output
+coverage
+*.tar.gz
+*.tgz
+backend/.env            # Specifically exclude backend .env

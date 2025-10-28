@@ -1,19 +1,22 @@
 {
   "name": "chatify-app",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "install:all": "npm --prefix frontend install && npm --prefix backend install",
     "clean:frontend": "npm --prefix frontend run clean",
     "clean:backend": "npm --prefix backend run clean",
-    "clean": "npm run clean:frontend && npm run clean:backend",
     "build:frontend": "npm --prefix frontend run build",
     "build:backend": "npm --prefix backend run build",
-    "build": "npm run clean && npm run build:frontend && npm run build:backend && node copy-frontend.js",
-    "start": "node backend/dist/app.js",
-    "vercel:build": "npm run install:all && npm run build"
-  },
-  "devDependencies": {
-    "rimraf": "^6.0.1"
+    "clean": "npm run clean:frontend && npm run clean:backend",
+    "build": "npm run clean && npm run build:frontend && npm run build:backend",
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend run start",
+    
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:restart": "docker compose restart",
+    "docker:clean": "docker compose down -v --remove-orphans"
   }
 }

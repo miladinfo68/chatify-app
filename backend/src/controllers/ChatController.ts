@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IChatService } from "../interfaces/IChatService.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 export class ChatController {
   constructor(private messageService: IChatService) {}

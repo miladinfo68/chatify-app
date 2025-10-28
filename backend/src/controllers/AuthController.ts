@@ -6,7 +6,7 @@ import {
   IRegisterPayload,
 } from "../interfaces/IAuthService.js";
 import { IClientMetadataService } from "../interfaces/IClientMetadataService.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 export class AuthController {
   constructor(
